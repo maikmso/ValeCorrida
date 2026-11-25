@@ -74,37 +74,67 @@ class Balao(
 
     private fun criarView(r: Resultado): View {
         val cor = when (r.nivel) {
-            Nivel.BOA -> Color.parseColor("#2E7D32")
-            Nivel.MEDIA -> Color.parseColor("#E08A00")
-            Nivel.RUIM -> Color.parseColor("#C62828")
+            Nivel.BOA -> Color.parseColor("#16A34A")
+            Nivel.MEDIA -> Color.parseColor("#D97706")
+            Nivel.RUIM -> Color.parseColor("#DC2626")
         }
         val titulo = when (r.nivel) {
-            Nivel.BOA -> "✅ VALE A PENA"
-            Nivel.MEDIA -> "⚠️ MAIS OU MENOS"
-            Nivel.RUIM -> "❌ NÃO VALE"
+            Nivel.BOA -> "VALE A PENA"
+            Nivel.MEDIA -> "MAIS OU MENOS"
+            Nivel.RUIM -> "NÃO VALE"
         }
 
+        // Card branco (estilo Aprova Mais) com borda na cor do resultado
         val caixa = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER_HORIZONTAL
-            setPadding(dp(18), dp(12), dp(18), dp(12))
+            setPadding(dp(20), dp(14), dp(20), dp(14))
             background = GradientDrawable().apply {
-                setColor(cor)
-                cornerRadius = dp(18).toFloat()
-                setStroke(dp(2), Color.WHITE)
+                setColor(Color.WHITE)
+                cornerRadius = dp(22).toFloat()
+                setStroke(dp(3), cor)
             }
-            elevation = dp(8).toFloat()
+            elevation = dp(12).toFloat()
         }
 
         val o = r.oferta
         val porHora = r.porHora?.let { Fmt.reais(it) + "/h" } ?: "—/h"
         val tempo = if (o.minutos > 0) "${o.minutos} min" else "? min"
 
-        caixa.addView(texto(titulo, 13f, negrito = true))
-        caixa.addView(texto(Fmt.reais(r.porKm) + "/km", 28f, negrito = true))
-        caixa.addView(texto(porHora, 18f, negrito = true))
-        caixa.addView(texto("${Fmt.reais(o.valor)} • ${Fmt.num(o.km)} km • $tempo", 14f))
-        caixa.addView(texto("Combustível ${Fmt.reais(r.custoCombustivel)} → Lucro ${Fmt.reais(r.lucro)}", 14f))
+        // Selo com o resultado
+        val selo = texto(titulo, 12f, negrito = true).apply {
+            setTextColor(Color.WHITE)
+            letterSpacing = 0.08f
+            setPadding(dp(12), dp(4), dp(12), dp(4))
+            background = GradientDrawable().apply {
+                setColor(cor)
+                cornerRadius = dp(100).toFloat()
+            }
+        }
+        caixa.addView(selo)
+
+        caixa.addView(texto(Fmt.reais(r.porKm) + "/km", 30f, negrito = true).apply {
+            setTextColor(cor)
+            setPadding(0, dp(6), 0, 0)
+        })
+        caixa.addView(texto(porHora, 18f, negrito = true).apply {
+            setTextColor(Color.parseColor("#0F172A"))
+        })
+
+        val linha = View(context).apply {
+            setBackgroundColor(Color.parseColor("#E8ECF4"))
+        }
+        caixa.addView(linha, LinearLayout.LayoutParams(dp(220), dp(1)).apply {
+            topMargin = dp(10); bottomMargin = dp(10)
+        })
+
+        caixa.addView(texto("${Fmt.reais(o.valor)}  •  ${Fmt.num(o.km)} km  •  $tempo", 14f).apply {
+            setTextColor(Color.parseColor("#475569"))
+        })
+        caixa.addView(texto("⛽ ${Fmt.reais(r.custoCombustivel)}   →   Lucro ${Fmt.reais(r.lucro)}", 14f, negrito = true).apply {
+            setTextColor(Color.parseColor("#0F172A"))
+            setPadding(0, dp(4), 0, 0)
+        })
         return caixa
     }
 

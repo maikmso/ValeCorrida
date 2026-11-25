@@ -6,12 +6,13 @@ import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Button
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
@@ -19,10 +20,9 @@ class MainActivity : Activity() {
 
     private lateinit var prefs: Prefs
 
+    private lateinit var txtStatusGeral: TextView
     private lateinit var txtSobreposicao: TextView
     private lateinit var txtAcessibilidade: TextView
-    private lateinit var btnSobreposicao: Button
-    private lateinit var btnAcessibilidade: Button
 
     private lateinit var edtPrecoLitro: EditText
     private lateinit var edtKmPorLitro: EditText
@@ -31,6 +31,8 @@ class MainActivity : Activity() {
     private lateinit var edtSegundos: EditText
     private lateinit var edtPacotes: EditText
 
+    private lateinit var layoutDiagnostico: LinearLayout
+    private lateinit var txtToggleDiag: TextView
     private lateinit var txtUltimoApp: TextView
     private lateinit var txtUltimoTexto: TextView
 
@@ -39,41 +41,48 @@ class MainActivity : Activity() {
         setContentView(R.layout.activity_main)
         prefs = Prefs(this)
 
+        txtStatusGeral = findViewById(R.id.txtStatusGeral)
         txtSobreposicao = findViewById(R.id.txtSobreposicao)
         txtAcessibilidade = findViewById(R.id.txtAcessibilidade)
-        btnSobreposicao = findViewById(R.id.btnSobreposicao)
-        btnAcessibilidade = findViewById(R.id.btnAcessibilidade)
         edtPrecoLitro = findViewById(R.id.edtPrecoLitro)
         edtKmPorLitro = findViewById(R.id.edtKmPorLitro)
         edtMetaKm = findViewById(R.id.edtMetaKm)
         edtMetaHora = findViewById(R.id.edtMetaHora)
         edtSegundos = findViewById(R.id.edtSegundos)
         edtPacotes = findViewById(R.id.edtPacotes)
+        layoutDiagnostico = findViewById(R.id.layoutDiagnostico)
+        txtToggleDiag = findViewById(R.id.txtToggleDiag)
         txtUltimoApp = findViewById(R.id.txtUltimoApp)
         txtUltimoTexto = findViewById(R.id.txtUltimoTexto)
 
-        btnSobreposicao.setOnClickListener {
+        findViewById<View>(R.id.rowSobreposicao).setOnClickListener {
             abrir(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
         }
 
-        btnAcessibilidade.setOnClickListener {
+        findViewById<View>(R.id.rowAcessibilidade).setOnClickListener {
             abrir(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-            toast("Vá em \"Apps instalados\" → Vale a Corrida → ative")
+            if (!acessibilidadeAtiva()) toast("Vá em “Apps instalados” → Vale a Corrida → ative")
         }
 
-        findViewById<Button>(R.id.btnInfoApp).setOnClickListener {
+        findViewById<View>(R.id.rowInfoApp).setOnClickListener {
             abrir(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
         }
 
-        findViewById<Button>(R.id.btnSalvar).setOnClickListener { salvar() }
+        findViewById<View>(R.id.btnSalvar).setOnClickListener { salvar() }
 
-        findViewById<Button>(R.id.btnTestar).setOnClickListener {
+        findViewById<View>(R.id.btnTestar).setOnClickListener {
             val servico = CorridaService.instancia
             if (servico == null) toast("Ative a leitura de tela primeiro")
             else servico.mostrarTeste()
         }
 
-        findViewById<Button>(R.id.btnCopiar).setOnClickListener {
+        txtToggleDiag.setOnClickListener {
+            val abrir = layoutDiagnostico.visibility != View.VISIBLE
+            layoutDiagnostico.visibility = if (abrir) View.VISIBLE else View.GONE
+            txtToggleDiag.text = if (abrir) "Diagnóstico ▴" else "Diagnóstico ▾"
+        }
+
+        findViewById<View>(R.id.btnCopiar).setOnClickListener {
             val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             cm.setPrimaryClip(ClipData.newPlainText("texto lido", prefs.ultimoTexto))
             toast("Copiado")
@@ -92,15 +101,23 @@ class MainActivity : Activity() {
         val sobreposicao = Settings.canDrawOverlays(this)
         val acessibilidade = acessibilidadeAtiva()
 
-        status(txtSobreposicao, "Sobreposição", sobreposicao)
-        status(txtAcessibilidade, "Leitura de tela", acessibilidade)
-        btnSobreposicao.isEnabled = !sobreposicao
-        btnAcessibilidade.text = if (acessibilidade) "Leitura de tela ativa (abrir config.)" else "Ativar leitura de tela"
+        // Permissões: verde "Ativo" ou azul "Ativar"
+        chip(txtSobreposicao, sobreposicao, "✓ Ativo", "Ativar",
+            R.drawable.bg_chip_ativar, R.color.azul)
+        chip(txtAcessibilidade, acessibilidade, "✓ Ativo", "Ativar",
+            R.drawable.bg_chip_ativar, R.color.azul)
+        // Status do topo: verde "Ligado" ou amarelo "Desligado"
+        chip(txtStatusGeral, acessibilidade, "● Ligado", "● Desligado",
+            R.drawable.bg_chip_off, R.color.ambar)
     }
 
-    private fun status(tv: TextView, nome: String, ok: Boolean) {
-        tv.text = if (ok) "✅ $nome: ativada" else "❌ $nome: desativada"
-        tv.setTextColor(if (ok) Color.parseColor("#2E7D32") else Color.parseColor("#C62828"))
+    private fun chip(
+        tv: TextView, ok: Boolean, textoOk: String, textoOff: String,
+        fundoOff: Int, corOff: Int
+    ) {
+        tv.text = if (ok) textoOk else textoOff
+        tv.setBackgroundResource(if (ok) R.drawable.bg_chip_ok else fundoOff)
+        tv.setTextColor(getColor(if (ok) R.color.verde else corOff))
     }
 
     private fun acessibilidadeAtiva(): Boolean {
@@ -139,13 +156,22 @@ class MainActivity : Activity() {
         prefs.segundosBalao = segundos.coerceIn(3, 120)
         prefs.pacotes = edtPacotes.text.toString().ifBlank { Prefs.PACOTES_PADRAO }
         carregarCampos()
-        toast("Salvo")
+        esconderTeclado()
+        toast("Salvo ✅")
     }
 
     private fun atualizarDiagnostico() {
         val app = prefs.ultimoAppVisto.ifBlank { "nenhum ainda" }
         txtUltimoApp.text = "Último app aberto: $app\n(abra a 99 e volte aqui para ver o pacote dela)"
         txtUltimoTexto.text = prefs.ultimoTexto.ifBlank { "Nada lido ainda. Fique online no Uber/99 e espere uma oferta." }
+    }
+
+    private fun esconderTeclado() {
+        currentFocus?.let {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+            it.clearFocus()
+        }
     }
 
     private fun numero(e: EditText): Double? =

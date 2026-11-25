@@ -2,154 +2,443 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F4F5F7">
+    android:background="@color/fundo"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
-        <!-- ===== PERMISSÕES ===== -->
-        <TextView
-            style="@style/Secao"
-            android:text="1. Permissões" />
+        <!-- ===== HERO (topo azul-marinho) ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_hero"
+            android:orientation="vertical">
 
-        <LinearLayout style="@style/Card">
-
-            <TextView
-                android:id="@+id/txtSobreposicao"
-                style="@style/Status"
-                android:text="Sobreposição: verificando..." />
-
-            <Button
-                android:id="@+id/btnSobreposicao"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ativar sobreposição" />
+                android:orientation="vertical"
+                android:paddingStart="22dp"
+                android:paddingTop="26dp"
+                android:paddingEnd="22dp"
+                android:paddingBottom="6dp">
 
-            <TextView
-                android:id="@+id/txtAcessibilidade"
-                style="@style/Status"
-                android:layout_marginTop="12dp"
-                android:text="Leitura de tela: verificando..." />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnAcessibilidade"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Vale a Corrida"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txtStatusGeral"
+                        style="@style/Chip"
+                        android:text="● Desligado" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="22dp"
+                    android:background="@drawable/bg_badge_hero"
+                    android:paddingStart="14dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="6dp"
+                    android:text="Para motoristas de Uber e 99"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:lineSpacingMultiplier="0.95"
+                    android:text="Saiba na hora se"
+                    android:textColor="#FFFFFF"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="a corrida "
+                        android:textColor="#FFFFFF"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="compensa."
+                        android:textColor="@color/amarelo"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Um balão aparece em cima da oferta com R$/km, R$/hora e o lucro depois do combustível."
+                    android:textColor="#CBD5E1"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/btnTestar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_btn_amarelo"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:paddingStart="18dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="18dp"
+                    android:paddingBottom="10dp"
+                    android:text="⚡  Testar o balão agora  →"
+                    android:textColor="@color/ambar"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- Onda no fim do topo -->
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ativar leitura de tela" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:textColor="#555555"
-                android:textSize="13sp"
-                android:text="Chave da leitura de tela cinza (“Configuração restrita”)?\nToque em “Abrir info do app” → ⋮ (canto de cima) → Permitir configurações restritas. Depois ative de novo.\n\nAproveite e em Bateria deixe como “Sem restrições”, senão a Samsung desliga o app." />
-
-            <Button
-                android:id="@+id/btnInfoApp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Abrir info do app" />
+                android:layout_height="44dp"
+                android:background="@drawable/onda" />
         </LinearLayout>
 
-        <!-- ===== CONFIGURAÇÕES ===== -->
-        <TextView
-            style="@style/Secao"
-            android:text="2. Seu carro e suas metas" />
+        <!-- ===== CONTEÚDO ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="28dp">
 
-        <LinearLayout style="@style/Card">
+            <!-- PERMISSÕES -->
+            <TextView
+                style="@style/Secao"
+                android:layout_marginTop="6dp"
+                android:text="Permissões" />
 
-            <TextView style="@style/Rotulo" android:text="Preço do combustível (R$/litro)" />
-            <EditText android:id="@+id/edtPrecoLitro" style="@style/Campo" />
+            <LinearLayout style="@style/Card">
 
-            <TextView style="@style/Rotulo" android:text="Consumo do carro (km por litro)" />
-            <EditText android:id="@+id/edtKmPorLitro" style="@style/Campo" />
+                <LinearLayout
+                    android:id="@+id/rowSobreposicao"
+                    style="@style/Linha">
 
-            <TextView style="@style/Rotulo" android:text="Meta mínima (R$ por km)" />
-            <EditText android:id="@+id/edtMetaKm" style="@style/Campo" />
+                    <TextView
+                        style="@style/Icone"
+                        android:text="🪟" />
 
-            <TextView style="@style/Rotulo" android:text="Meta mínima (R$ por hora)" />
-            <EditText android:id="@+id/edtMetaHora" style="@style/Campo" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-            <TextView style="@style/Rotulo" android:text="Tempo do balão na tela (segundos)" />
-            <EditText
-                android:id="@+id/edtSegundos"
-                style="@style/Campo"
-                android:digits="0123456789"
-                android:inputType="number" />
+                        <TextView
+                            style="@style/TituloLinha"
+                            android:text="Sobreposição" />
 
-            <TextView style="@style/Rotulo" android:text="Apps monitorados (pacotes, separados por vírgula)" />
-            <EditText
-                android:id="@+id/edtPacotes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine|textNoSuggestions"
-                android:textSize="14sp" />
+                        <TextView
+                            style="@style/SubLinha"
+                            android:text="Mostrar o balão por cima do Uber e da 99" />
+                    </LinearLayout>
 
-            <Button
+                    <TextView
+                        android:id="@+id/txtSobreposicao"
+                        style="@style/Chip"
+                        android:text="Ativar" />
+                </LinearLayout>
+
+                <View style="@style/Divisor" />
+
+                <LinearLayout
+                    android:id="@+id/rowAcessibilidade"
+                    style="@style/Linha">
+
+                    <TextView
+                        style="@style/Icone"
+                        android:text="👁" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TituloLinha"
+                            android:text="Leitura de tela" />
+
+                        <TextView
+                            style="@style/SubLinha"
+                            android:text="Ler valor, distância e tempo da oferta" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txtAcessibilidade"
+                        style="@style/Chip"
+                        android:text="Ativar" />
+                </LinearLayout>
+
+                <View style="@style/Divisor" />
+
+                <LinearLayout
+                    android:id="@+id/rowInfoApp"
+                    style="@style/Linha">
+
+                    <TextView
+                        style="@style/Icone"
+                        android:text="🔋" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TituloLinha"
+                            android:text="Bateria e restrições" />
+
+                        <TextView
+                            style="@style/SubLinha"
+                            android:text="Deixe a bateria “Sem restrições”. Chave cinza? ⋮ → Permitir configurações restritas" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="›"
+                        android:textColor="@color/texto3"
+                        android:textSize="26sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- CARRO -->
+            <TextView
+                style="@style/Secao"
+                android:text="Seu carro" />
+
+            <LinearLayout
+                style="@style/Card"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Campo"
+                        android:layout_marginEnd="6dp">
+
+                        <TextView
+                            style="@style/Rotulo"
+                            android:text="⛽ Combustível (R$/L)" />
+
+                        <EditText
+                            android:id="@+id/edtPrecoLitro"
+                            style="@style/Input" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        style="@style/Campo"
+                        android:layout_marginStart="6dp">
+
+                        <TextView
+                            style="@style/Rotulo"
+                            android:text="🚗 Consumo (km/L)" />
+
+                        <EditText
+                            android:id="@+id/edtKmPorLitro"
+                            style="@style/Input" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- METAS -->
+            <TextView
+                style="@style/Secao"
+                android:text="Suas metas" />
+
+            <LinearLayout
+                style="@style/Card"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Campo"
+                        android:layout_marginEnd="6dp">
+
+                        <TextView
+                            style="@style/Rotulo"
+                            android:text="Mínimo por km (R$)" />
+
+                        <EditText
+                            android:id="@+id/edtMetaKm"
+                            style="@style/Input" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        style="@style/Campo"
+                        android:layout_marginStart="6dp">
+
+                        <TextView
+                            style="@style/Rotulo"
+                            android:text="Mínimo por hora (R$)" />
+
+                        <EditText
+                            android:id="@+id/edtMetaHora"
+                            style="@style/Input" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        style="@style/Campo"
+                        android:layout_marginEnd="6dp">
+
+                        <TextView
+                            style="@style/Rotulo"
+                            android:text="Balão na tela (seg)" />
+
+                        <EditText
+                            android:id="@+id/edtSegundos"
+                            style="@style/Input"
+                            android:digits="0123456789"
+                            android:inputType="number" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="3dp"
+                        android:paddingTop="22dp"
+                        android:text="🟢 bateu as 2 metas\n🟡 bateu 1 meta\n🔴 não bateu nenhuma"
+                        android:textColor="@color/texto2"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- SALVAR -->
+            <TextView
                 android:id="@+id/btnSalvar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Salvar" />
-        </LinearLayout>
+                style="@style/BotaoPrimario"
+                android:layout_marginTop="22dp"
+                android:text="Salvar configurações  →" />
 
-        <!-- ===== TESTE ===== -->
-        <TextView
-            style="@style/Secao"
-            android:text="3. Testar" />
-
-        <LinearLayout style="@style/Card">
-
-            <Button
-                android:id="@+id/btnTestar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mostrar balão de teste" />
-
+            <!-- DIAGNÓSTICO (escondido) -->
             <TextView
+                android:id="@+id/txtToggleDiag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#555555"
-                android:textSize="13sp"
-                android:text="Toque no balão para fechar. Arraste para mudar de lugar." />
-        </LinearLayout>
-
-        <!-- ===== DIAGNÓSTICO ===== -->
-        <TextView
-            style="@style/Secao"
-            android:text="4. Diagnóstico" />
-
-        <LinearLayout style="@style/Card">
-
-            <TextView
-                android:id="@+id/txtUltimoApp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="#333333"
-                android:textIsSelectable="true"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/bg_ripple"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="Diagnóstico ▾"
+                android:textColor="@color/texto3"
                 android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/txtUltimoTexto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#EEEEEE"
-                android:fontFamily="monospace"
-                android:padding="8dp"
-                android:textColor="#222222"
-                android:textIsSelectable="true"
-                android:textSize="12sp" />
+            <LinearLayout
+                android:id="@+id/layoutDiagnostico"
+                style="@style/Card"
+                android:padding="16dp"
+                android:visibility="gone">
 
-            <Button
-                android:id="@+id/btnCopiar"
+                <TextView
+                    style="@style/Rotulo"
+                    android:text="Apps monitorados (pacotes, separados por vírgula)" />
+
+                <EditText
+                    android:id="@+id/edtPacotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:padding="12dp"
+                    android:textColor="@color/texto"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/txtUltimoApp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:textColor="@color/texto2"
+                    android:textIsSelectable="true"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/txtUltimoTexto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_diag"
+                    android:fontFamily="monospace"
+                    android:maxLines="14"
+                    android:padding="10dp"
+                    android:textColor="@color/texto2"
+                    android:textIsSelectable="true"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/btnCopiar"
+                    style="@style/BotaoSecundario"
+                    android:layout_height="46dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Copiar texto lido"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Copiar texto lido" />
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="O app só lê a oferta e mostra o cálculo.\nEle não aceita nem recusa corridas."
+                android:textColor="@color/texto3"
+                android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
