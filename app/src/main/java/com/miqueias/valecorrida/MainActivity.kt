@@ -119,8 +119,9 @@ class MainActivity : Activity() {
     // ===================== ATUALIZAÇÃO =====================
 
     private fun verificarAtualizacao() {
+        // Checa toda vez que a tela abre (no máximo 1 vez a cada 15 s, pra não repetir à toa)
         val agora = System.currentTimeMillis()
-        if (versaoNova == null && agora - ultimaChecagem < 10 * 60 * 1000) return
+        if (agora - ultimaChecagem < 15 * 1000) return
         ultimaChecagem = agora
 
         Thread {
