@@ -135,6 +135,44 @@
             android:paddingEnd="18dp"
             android:paddingBottom="28dp">
 
+            <!-- ATUALIZAÇÃO (aparece só quando tem versão nova) -->
+            <LinearLayout
+                android:id="@+id/cardAtualizacao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_card_update"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txtAtualizacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="🎉 Nova versão disponível"
+                    android:textColor="@color/texto"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Toque para baixar e instalar. Suas configurações continuam salvas."
+                    android:textColor="@color/texto2"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/btnAtualizar"
+                    style="@style/BotaoPrimario"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
+                    android:text="Atualizar agora  →"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
             <!-- PERMISSÕES -->
             <TextView
                 style="@style/Secao"
@@ -439,6 +477,15 @@
                 android:text="O app só lê a oferta e mostra o cálculo.\nEle não aceita nem recusa corridas."
                 android:textColor="@color/texto3"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/txtVersao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:textColor="@color/texto3"
+                android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

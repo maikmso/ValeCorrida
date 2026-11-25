@@ -11,8 +11,10 @@ android {
         applicationId = "com.miqueias.valecorrida"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1"
+        // No GitHub Actions o número da versão = número da execução (v1, v2, v3...)
+        val numero = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+        versionCode = numero
+        versionName = "1.$numero"
     }
 
     // Chave fixa: assim cada APK novo instala por cima do anterior

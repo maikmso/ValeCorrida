@@ -44,13 +44,21 @@ class CorridaService : AccessibilityService() {
             prefs.ultimoAppVisto = pkg
         }
 
-        if (pkg !in prefs.listaPacotes()) return
+        if (!monitorado(pkg)) return
 
         // Espera a tela "assentar" antes de ler (evita ler 20x por segundo)
         pendente?.let { handler.removeCallbacks(it) }
         val r = Runnable { analisar(pkg) }
         pendente = r
         handler.postDelayed(r, 350)
+    }
+
+    /** Pacotes da lista + qualquer app com "uber" ou "99" no nome do pacote. */
+    private fun monitorado(pkg: String): Boolean {
+        if (pkg == packageName) return false
+        if (pkg in prefs.listaPacotes()) return true
+        val p = pkg.lowercase()
+        return p.contains("uber") || p.contains("99")
     }
 
     private fun analisar(pkg: String) {

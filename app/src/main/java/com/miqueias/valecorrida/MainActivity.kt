@@ -6,7 +6,9 @@ import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInstaller
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
@@ -36,6 +38,16 @@ class MainActivity : Activity() {
     private lateinit var txtUltimoApp: TextView
     private lateinit var txtUltimoTexto: TextView
 
+    private lateinit var cardAtualizacao: LinearLayout
+    private lateinit var txtAtualizacao: TextView
+    private lateinit var btnAtualizar: TextView
+    private var versaoNova: Versao? = null
+    private var baixando = false
+
+    companion object {
+        private var ultimaChecagem = 0L
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -54,6 +66,12 @@ class MainActivity : Activity() {
         txtToggleDiag = findViewById(R.id.txtToggleDiag)
         txtUltimoApp = findViewById(R.id.txtUltimoApp)
         txtUltimoTexto = findViewById(R.id.txtUltimoTexto)
+        cardAtualizacao = findViewById(R.id.cardAtualizacao)
+        txtAtualizacao = findViewById(R.id.txtAtualizacao)
+        btnAtualizar = findViewById(R.id.btnAtualizar)
+
+        findViewById<TextView>(R.id.txtVersao).text = "Versão ${Atualizador.versaoAtual(this)}"
+        btnAtualizar.setOnClickListener { atualizar() }
 
         findViewById<View>(R.id.rowSobreposicao).setOnClickListener {
             abrir(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
@@ -95,6 +113,77 @@ class MainActivity : Activity() {
         super.onResume()
         atualizarStatus()
         atualizarDiagnostico()
+        verificarAtualizacao()
+    }
+
+    // ===================== ATUALIZAÇÃO =====================
+
+    private fun verificarAtualizacao() {
+        val agora = System.currentTimeMillis()
+        if (versaoNova == null && agora - ultimaChecagem < 10 * 60 * 1000) return
+        ultimaChecagem = agora
+
+        Thread {
+            val ultima = Atualizador.buscarUltima()
+            runOnUiThread {
+                if (ultima != null && ultima.codigo > Atualizador.versaoAtual(this)) {
+                    versaoNova = ultima
+                    txtAtualizacao.text = "🎉 Nova versão disponível (v${ultima.codigo})"
+                    cardAtualizacao.visibility = View.VISIBLE
+                } else {
+                    cardAtualizacao.visibility = View.GONE
+                }
+            }
+        }.start()
+    }
+
+    private fun atualizar() {
+        val v = versaoNova ?: return
+        if (baixando) return
+
+        // O Android exige liberar "instalar apps desconhecidos" para este app
+        if (Build.VERSION.SDK_INT >= 26 && !packageManager.canRequestPackageInstalls()) {
+            toast("Ative “Permitir desta fonte” e volte aqui")
+            abrir(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
+            return
+        }
+
+        baixando = true
+        btnAtualizar.text = "Baixando..."
+        Thread {
+            try {
+                Atualizador.baixarEInstalar(this, v) { pct ->
+                    runOnUiThread { btnAtualizar.text = "Baixando... $pct%" }
+                }
+                runOnUiThread { btnAtualizar.text = "Instalando..." }
+            } catch (e: Exception) {
+                runOnUiThread {
+                    toast("Erro ao baixar: ${e.message}")
+                    btnAtualizar.text = "Tentar de novo"
+                }
+            } finally {
+                baixando = false
+            }
+        }.start()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action != Atualizador.ACAO_STATUS) return
+
+        when (intent.getIntExtra(PackageInstaller.EXTRA_STATUS, -999)) {
+            PackageInstaller.STATUS_PENDING_USER_ACTION -> {
+                @Suppress("DEPRECATION")
+                val confirmar = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
+                if (confirmar != null) startActivity(confirmar)
+            }
+            PackageInstaller.STATUS_SUCCESS -> toast("Atualizado ✅")
+            else -> {
+                val msg = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: "desconhecido"
+                toast("Não foi possível atualizar: $msg")
+                btnAtualizar.text = "Tentar de novo"
+            }
+        }
     }
 
     private fun atualizarStatus() {
