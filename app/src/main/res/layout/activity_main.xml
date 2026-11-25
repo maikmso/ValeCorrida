@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F4F5F7">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ===== PERMISSÕES ===== -->
+        <TextView
+            style="@style/Secao"
+            android:text="1. Permissões" />
+
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                android:id="@+id/txtSobreposicao"
+                style="@style/Status"
+                android:text="Sobreposição: verificando..." />
+
+            <Button
+                android:id="@+id/btnSobreposicao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ativar sobreposição" />
+
+            <TextView
+                android:id="@+id/txtAcessibilidade"
+                style="@style/Status"
+                android:layout_marginTop="12dp"
+                android:text="Leitura de tela: verificando..." />
+
+            <Button
+                android:id="@+id/btnAcessibilidade"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ativar leitura de tela" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textColor="#555555"
+                android:textSize="13sp"
+                android:text="Chave da leitura de tela cinza ("Configuração restrita")?\nToque em "Abrir info do app" → ⋮ (canto de cima) → Permitir configurações restritas. Depois ative de novo.\n\nAproveite e em Bateria deixe como "Sem restrições", senão a Samsung desliga o app." />
+
+            <Button
+                android:id="@+id/btnInfoApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Abrir info do app" />
+        </LinearLayout>
+
+        <!-- ===== CONFIGURAÇÕES ===== -->
+        <TextView
+            style="@style/Secao"
+            android:text="2. Seu carro e suas metas" />
+
+        <LinearLayout style="@style/Card">
+
+            <TextView style="@style/Rotulo" android:text="Preço do combustível (R$/litro)" />
+            <EditText android:id="@+id/edtPrecoLitro" style="@style/Campo" />
+
+            <TextView style="@style/Rotulo" android:text="Consumo do carro (km por litro)" />
+            <EditText android:id="@+id/edtKmPorLitro" style="@style/Campo" />
+
+            <TextView style="@style/Rotulo" android:text="Meta mínima (R$ por km)" />
+            <EditText android:id="@+id/edtMetaKm" style="@style/Campo" />
+
+            <TextView style="@style/Rotulo" android:text="Meta mínima (R$ por hora)" />
+            <EditText android:id="@+id/edtMetaHora" style="@style/Campo" />
+
+            <TextView style="@style/Rotulo" android:text="Tempo do balão na tela (segundos)" />
+            <EditText
+                android:id="@+id/edtSegundos"
+                style="@style/Campo"
+                android:digits="0123456789"
+                android:inputType="number" />
+
+            <TextView style="@style/Rotulo" android:text="Apps monitorados (pacotes, separados por vírgula)" />
+            <EditText
+                android:id="@+id/edtPacotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/btnSalvar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Salvar" />
+        </LinearLayout>
+
+        <!-- ===== TESTE ===== -->
+        <TextView
+            style="@style/Secao"
+            android:text="3. Testar" />
+
+        <LinearLayout style="@style/Card">
+
+            <Button
+                android:id="@+id/btnTestar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mostrar balão de teste" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#555555"
+                android:textSize="13sp"
+                android:text="Toque no balão para fechar. Arraste para mudar de lugar." />
+        </LinearLayout>
+
+        <!-- ===== DIAGNÓSTICO ===== -->
+        <TextView
+            style="@style/Secao"
+            android:text="4. Diagnóstico" />
+
+        <LinearLayout style="@style/Card">
+
+            <TextView
+                android:id="@+id/txtUltimoApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#333333"
+                android:textIsSelectable="true"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/txtUltimoTexto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="#EEEEEE"
+                android:fontFamily="monospace"
+                android:padding="8dp"
+                android:textColor="#222222"
+                android:textIsSelectable="true"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btnCopiar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Copiar texto lido" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

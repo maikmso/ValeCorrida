@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Vale a Corrida</string>
+    <string name="descricao_servico">Lê o valor, a distância e o tempo das ofertas de corrida do Uber e da 99 para mostrar um balão com R$/km, R$/hora e lucro. O app não aceita nem recusa corridas, só mostra o cálculo.</string>
+</resources>
