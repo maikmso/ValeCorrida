@@ -24,6 +24,8 @@ class CorridaService : AccessibilityService() {
     private val handler = Handler(Looper.getMainLooper())
     private var pendente: Runnable? = null
     private var ultimaAssinatura = ""
+    /** Texto que chega junto com os eventos (às vezes é o único jeito de ler o card flutuante). */
+    private val textosEvento = LinkedHashMap<String, LinkedHashSet<String>>()
 
     override fun onServiceConnected() {
         super.onServiceConnected()
@@ -35,20 +37,30 @@ class CorridaService : AccessibilityService() {
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event == null || instancia == null) return
-        val pkg = event.packageName?.toString() ?: return
+        val pkg = event.packageName?.toString()
 
         // Diagnóstico: guarda o último app aberto (ajuda a descobrir o pacote da 99)
-        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+        if (pkg != null && event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
             pkg != packageName && pkg != "com.android.systemui"
         ) {
             prefs.ultimoAppVisto = pkg
         }
 
-        if (!monitorado(pkg)) return
+        // A oferta do Uber/99 costuma abrir numa janela flutuante. Nesse caso o evento
+        // pode vir sem pacote (TYPE_WINDOWS_CHANGED), então analisamos todas as janelas.
+        val interessa = (pkg != null && monitorado(pkg)) ||
+            event.eventType == AccessibilityEvent.TYPE_WINDOWS_CHANGED
+        if (!interessa) return
+
+        if (pkg != null && monitorado(pkg)) {
+            val set = textosEvento.getOrPut(pkg) { LinkedHashSet() }
+            event.text?.forEach { t -> t?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let { set.add(it) } }
+            event.contentDescription?.toString()?.trim()?.takeIf { it.isNotEmpty() }?.let { set.add(it) }
+        }
 
         // Espera a tela "assentar" antes de ler (evita ler 20x por segundo)
         pendente?.let { handler.removeCallbacks(it) }
-        val r = Runnable { analisar(pkg) }
+        val r = Runnable { analisar() }
         pendente = r
         handler.postDelayed(r, 350)
     }
@@ -61,33 +73,49 @@ class CorridaService : AccessibilityService() {
         return p.contains("uber") || p.contains("99")
     }
 
-    private fun analisar(pkg: String) {
-        val textos = LinkedHashSet<String>()
-
-        // Procura em todas as janelas do app (o card da oferta às vezes é outra janela)
+    /** Lê todas as janelas visíveis do Uber/99 e mostra o balão da primeira oferta encontrada. */
+    private fun analisar() {
+        // Junta o texto por app (a lista de janelas vem da que está mais na frente para trás)
+        val porApp = LinkedHashMap<String, LinkedHashSet<String>>()
         try {
             for (janela in windows) {
                 val raiz = janela.root ?: continue
-                if (raiz.packageName?.toString() == pkg) coletar(raiz, textos, 0)
+                val pkg = raiz.packageName?.toString() ?: continue
+                if (!monitorado(pkg)) continue
+                coletar(raiz, porApp.getOrPut(pkg) { LinkedHashSet() }, 0)
             }
         } catch (_: Exception) { }
-        if (textos.isEmpty()) {
-            rootInActiveWindow?.let { if (it.packageName?.toString() == pkg) coletar(it, textos, 0) }
+
+        if (porApp.isEmpty()) {
+            val raiz = rootInActiveWindow
+            val pkg = raiz?.packageName?.toString()
+            if (raiz != null && pkg != null && monitorado(pkg)) {
+                coletar(raiz, porApp.getOrPut(pkg) { LinkedHashSet() }, 0)
+            }
         }
-        if (textos.isEmpty()) return
-
-        val texto = removerAgregados(textos.toList()).joinToString(" | ")
-
-        if (texto.contains("R$") || texto.contains("km", ignoreCase = true)) {
-            prefs.ultimoTexto = "[$pkg]\n$texto"
+        // Junta o texto que veio nos eventos
+        for ((pkg, set) in textosEvento) {
+            if (set.isNotEmpty()) porApp.getOrPut(pkg) { LinkedHashSet() }.addAll(set)
         }
+        textosEvento.clear()
+        if (porApp.isEmpty()) return
 
-        val oferta = OfertaParser.extrair(texto) ?: return
-        val assinatura = "${oferta.valor}|${oferta.km}|${oferta.minutos}"
-        if (assinatura == ultimaAssinatura && balao.visivel) return
-        ultimaAssinatura = assinatura
+        for ((pkg, textos) in porApp) {
+            if (textos.isEmpty()) continue
+            val texto = removerAgregados(textos.toList()).joinToString(" | ")
 
-        balao.mostrar(Calculadora.calcular(oferta, prefs))
+            if (texto.contains("R$") || texto.contains("km", ignoreCase = true)) {
+                prefs.ultimoTexto = "[$pkg]\n$texto"
+            }
+
+            val oferta = OfertaParser.extrair(texto) ?: continue
+            val assinatura = "$pkg|${oferta.valor}|${oferta.km}|${oferta.minutos}"
+            if (assinatura == ultimaAssinatura && balao.visivel) return
+            ultimaAssinatura = assinatura
+
+            balao.mostrar(Calculadora.calcular(oferta, prefs))
+            return
+        }
     }
 
     private fun coletar(no: AccessibilityNodeInfo?, saida: MutableSet<String>, profundidade: Int) {

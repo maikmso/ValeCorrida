@@ -41,11 +41,21 @@ object OfertaParser {
         }
         if (km <= 0.0 || km > 500.0) return null
 
-        // --- Valor: o "R$" mais perto ANTES da primeira distância (é o preço do card da oferta) ---
+        // --- Valor ---
+        // Ignora valores que não são o preço da corrida:
+        //   "+R$ 8,00 incluído" (bônus, tem "+" antes) e "R$1,66/km" (tem "/" depois).
+        // Fica com o primeiro que sobrar antes da primeira distância.
         val valores = rValor.findAll(texto).toList()
         if (valores.isEmpty()) return null
         val primeiraDist = distancias.first().range.first
-        val escolhido = valores.lastOrNull { it.range.first < primeiraDist } ?: valores.first()
+        val candidatos = valores.filter { m ->
+            val antes = texto.substring(0, m.range.first).trimEnd()
+            val depois = texto.substring(m.range.last + 1).trimStart()
+            !antes.endsWith("+") && !depois.startsWith("/")
+        }
+        val escolhido = candidatos.firstOrNull { it.range.first < primeiraDist }
+            ?: candidatos.firstOrNull()
+            ?: valores.first()
         val valor = numero(escolhido.groupValues[1]) ?: return null
         if (valor <= 0.0) return null
 
