@@ -28,8 +28,8 @@ object OfertaParser {
 
     fun extrair(textoBruto: String): Oferta? {
         val texto = textoBruto
-            .replace(' ', ' ')
-            .replace(' ', ' ')
+            .replace('\u00A0', ' ')
+            .replace('\u202F', ' ')
 
         // --- Distância ---
         val distancias = rDistancia.findAll(texto).toList()
