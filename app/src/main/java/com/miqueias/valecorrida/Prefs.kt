@@ -40,6 +40,11 @@ class Prefs(context: Context) {
         get() = sp.getInt("balaoY", 200)
         set(v) = sp.edit().putInt("balaoY", v).apply()
 
+    // Altura do banner no topo (o motorista pode arrastar para baixo)
+    var bannerY: Int
+        get() = sp.getInt("bannerY", 0)
+        set(v) = sp.edit().putInt("bannerY", v).apply()
+
     // Diagnóstico
     var ultimoTexto: String
         get() = sp.getString("ultimoTexto", "") ?: ""

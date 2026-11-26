@@ -113,7 +113,7 @@ class CorridaService : AccessibilityService() {
             if (assinatura == ultimaAssinatura && balao.visivel) return
             ultimaAssinatura = assinatura
 
-            balao.mostrar(Calculadora.calcular(oferta, prefs))
+            balao.mostrar(Calculadora.calcular(oferta, prefs), nomeApp(pkg))
             return
         }
     }
@@ -142,7 +142,16 @@ class CorridaService : AccessibilityService() {
         }
 
     fun mostrarTeste() {
-        balao.mostrar(Calculadora.calcular(Oferta(18.50, 9.5, 19), prefs))
+        balao.mostrar(Calculadora.calcular(Oferta(18.50, 9.5, 19), prefs), "Teste")
+    }
+
+    private fun nomeApp(pkg: String): String {
+        val p = pkg.lowercase()
+        return when {
+            p.contains("uber") -> "Uber"
+            p.contains("99") -> "99"
+            else -> pkg.substringAfterLast('.')
+        }
     }
 
     override fun onInterrupt() {}
